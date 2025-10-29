@@ -1,19 +1,20 @@
 from handlers.MultiInstanceLabel import MultiInstanceLabel
 
 class ImageHandler:
-    def __init__(self, viewer, dataset, global_mil):
+    def __init__(self, viewer, dataset, global_mil, on_new_mil):
         self.viewer = viewer
         self.dataset = dataset
         self.current_index = 0
         self.mil = global_mil
+        self.on_new_mil = on_new_mil
 
         self.load_image_and_annotations()
 
     def load_image_and_annotations(self):
         img_path, ann_path = self.dataset[self.current_index]
-        print("Current index:", self.current_index)
-        print(f"Loading image: {img_path} with annotations: {ann_path}")
-        self.mil = MultiInstanceLabel(img_path, ann_path)
+        new_mil = MultiInstanceLabel(img_path, ann_path)
+        self.on_new_mil(new_mil)
+        self.mil = new_mil
         labels = self.mil.get_labels_for_display()
 
         # clear existing layers (safe)
